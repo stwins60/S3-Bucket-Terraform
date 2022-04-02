@@ -34,7 +34,7 @@ resource "aws_s3_bucket_website_configuration" "cloudpros" {
 
 
 
-resource "aws_s3_bucket_object" "website_files" {
+resource "aws_s3_object" "website_files" {
   for_each     = fileset(local.dir, "**/*.*")
   bucket       = aws_s3_bucket.cloudpros.id
   key          = replace(each.value, local.dir, "")
@@ -60,7 +60,7 @@ resource "aws_acm_certificate" "certificate" {
 
 
 resource "aws_cloudfront_distribution" "s3_distribution" {
-  depends_on = [aws_s3_bucket_object.website_files, ]
+  depends_on = [aws_s3_object.website_files, ]
   origin {
     domain_name = aws_s3_bucket.cloudpros.bucket_regional_domain_name
     // domain_name = "${aws_s3_bucket.cloudpros.bucket.website_endpoint}"
